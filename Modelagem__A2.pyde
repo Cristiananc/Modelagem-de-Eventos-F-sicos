@@ -11,20 +11,23 @@ g = 98
 teta = -PI/2
 teta2 = 0
 teta3 = 0
+teta02 = 0
+phi = 0
 t0 = millis()/1000.0
 R = 225
-R2 = 100
+R2 = 80
 R3 = 100
 x = 0
 y =0
 ida = 1
+a = 0 
 
 
 def setup():
     size(900, 600)
 
 def draw():
-    global x1, x2, y1, y2, t0, m1, m2, h, teta, R, v1, teta2, aux, y, x, v2, y3, y4, x3, y5,v3, y4,  teta3, R3, ida, fundo
+    global x1, x2, y1, y2, t0, m1, m2, h, teta, R, v1, teta2, aux, y, x, v2, y3, y4, x3, y5,v3, y4, teta3, R3, ida, teta02, a, phi, fundo
     translate(width/2, height/2)
 
     #variação do tempo 
@@ -36,7 +39,7 @@ def draw():
     fill(191, 255, 0)
     ellipse(x1, y1, 20, 20)
     line(-255,0,0,0)
-    
+   
     if ida == 1:
         if x1 < -225:
          #atualização da posição e velocidade
@@ -58,8 +61,8 @@ def draw():
          x = x + 1
          y3 = y2
          x2 = R2*sin(teta2) 
-         y2 = R2*cos(teta2) - 175
-         v2 = sqrt(abs(2*((v2**2)/2 + g*y3 - g*y2)))
+         y2 = R2*cos(teta2) - 155
+         v2 = sqrt(abs(2*((v2**2)/2 + g*y2 - g*y3)))
          teta2 = teta2 + v2*dt/R2
 
         elif x2 <= 0 and y2 <= 0:
@@ -67,8 +70,8 @@ def draw():
          y = y + 1
          y3 = y2
          x2 = R2*sin(teta2) 
-         y2 = R2*cos(teta2) - 175
-         v2 = sqrt(abs(2*((v2**2)/2 + g*y3 - g*y2)))
+         y2 = R2*cos(teta2) - 155
+         v2 = sqrt(abs(2*((v2**2)/2 + g*y2 - g*y3)))
          teta2 = teta2 + v2*dt/R2
         
         elif x2 >= 0 and y2 <= 0 and y > 0 and x2<225:
@@ -82,7 +85,7 @@ def draw():
          y5 = y4
          x3 = R3*sin(teta3)+285 
          y4 = R3*cos(teta3)-175
-         v2 = sqrt(abs(2*((v2**2)/2 + g*y5 - g*y4)))
+         v2 = sqrt(abs(2*((v2**2)/2 + g*y4 - g*y5)))
          teta3 = teta3 + v2*dt/R2
          if teta3 >= PI/3:
              ida = 0
@@ -94,48 +97,62 @@ def draw():
             y5 = y4
             x3 = R3*sin(teta3)+285 
             y4 = R3*cos(teta3)-175
-            v2 = sqrt(abs(2*((v2**2)/2 + g*y5 - g*y4)))
+            v2 = sqrt(abs(2*((v2**2)/2 + g*y4 - g*y5)))
             teta3 = teta3 - v2*dt/R2
             if teta3 < 0:
                 x3 = R3*sin(0)+285
                 y4 = R3*cos(0)-175
                 
         #volta: reta entre o loop e o pêndulo:
-        elif x2 >= 0 and y2 < 0 and y > 0 and x2>0: 
+        elif x2 > 0 and y2 < 0 and y > 0 : 
           x2 = x2 - v2*dt
-          y2 = -75
+          #if x2<0 :
+         #     x2 = 0
+         # y2 = -75
+          
           
         #volta: loop (meia lua esquerda):
-        elif x2 < 0 and y2 <= 0:
+        elif x2 <= 0 and y2 <= 0 and y >0:
             y3 = y2
-            x2 = R2*sin(teta2) 
-            y2 = R2*cos(teta2) - 175
-            v2 = sqrt(abs(2*((v2**2)/2 + g*y3 - g*y2)))
-            teta2 = teta2 - v2*dt/R2
-            if x2 > 0:
+            x2 = R2*sin(teta02) 
+            y2 = R2*cos(teta02) - 155
+            v2 = sqrt(abs(2*((v2**2)/2 + g*y2 - g*y3)))
+            teta02 = teta02 - v2*dt/R2
+            if x2 > 0: 
                 y = 0
                 
         #volta: loop (meia lua direita):
-        elif x2 > 0 and y == 0 and teta2 >= 0: 
+        elif x2 > 0 and y == 0 and teta2 >= 0: ##x2>0
             y3 = y2
-            x2 = R2*sin(teta2) 
-            y2 = R2*cos(teta2) - 175
-            v2 = sqrt(abs(2*((v2**2)/2 + g*y3 - g*y2)))
-            teta2 = teta2 - v2*dt/R2
+            x2 = R2*sin(teta02) 
+            y2 = R2*cos(teta02) - 155
+            v2 = sqrt(abs(2*((v2**2)/2 + g*y2 - g*y3)))
+            teta02 = teta02 - v2*dt/R2
             
-        #volta: reta entre queda e loop:
-        # elif x2 < 0 and y == 0 and x2 <:
-        #    elif x1 < -112:
-        # x1 = x1 + v1*dt
-        # y1 = -75
+        #volta: reta até colisão com a outra bola:
+        elif x2 < 0 and y == 0 and x2 > -87:
+            x2 = x2 - v2*dt
+            y2 = -75
+            if x2 < -87:
+                x2 = -87
+        
+        elif x2 == -87 and x1 > -230 and a == 0:
+            x1 = x1 - v2*dt
+            y1 = -75
+            if x1 < -230:
+                x1 = -230
             
-            
-    #Imagem de fundo
-    background(224,255,255)
+        elif x1 <= -230:
+            a = 1
+            x1 = R*sin(phi) - 230
+            y1 = R*cos(phi) - 300
+            v1 = sqrt(abs(2*g*(h-y1)))
+            phi = phi - v2*dt/R
     
-    #imagens
-    fundo = loadImage("1.jpg")
-    image(fundo, -400, - 200)
+    #Imagem de fundo
+    background(176,224,230)
+    #fundo = loadImage("Sem título.jpg")
+    #image(fundo, -450, -300)
     
     #Bolinhas colisão
     ellipse(x1, y1, 20, 20)
@@ -150,14 +167,14 @@ def draw():
         
     #bolinha pêndulo
     ellipse(x3, y4,20,20)
-    
+           
     #Trajetória
     noFill()
     stroke(160,82,45)
     strokeWeight(4)
     arc(-230, -290, 450, 450, radians(90), radians(180))
     line(-230, -65, 5 , - 65)
-    ellipse(0, -174, 216, 216)
+    ellipse(0, -155, 180, 180)
     line(5, -65, 225 , - 65)
     
     #Pêndulo de Newton
@@ -171,4 +188,3 @@ def draw():
     
     #obstáculo:
     rect(361, -147, 85, 15) 
-    
